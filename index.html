@@ -7,7 +7,7 @@
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
         .header { text-align: center; color: #8C1515; padding: 20px 0; }
-        .container { width: 90%; max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }
+        .container { width: 90%; max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; text-align: center; }
         th, td { border: 1px solid #ddd; padding: 10px; }
         th { background-color: #8C1515; color: white; }
@@ -15,7 +15,7 @@
         a:hover { text-decoration: underline; }
         .hidden { display: none; }
         label { font-weight: bold; display: block; margin-top: 10px; }
-        input, textarea { width: 100%; padding: 5px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
+        input, select, textarea { width: 100%; padding: 5px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
         button { background-color: #8C1515; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 20px; }
         button:hover { background-color: #600d0d; }
     </style>
@@ -36,6 +36,13 @@
                         <th>Student ID</th>
                         <th>Grade</th>
                         <th>Quarter F's</th>
+                        <th>ELA STAR Band</th>
+                        <th>Math STAR Band</th>
+                        <th>Referrals</th>
+                        <th>Suspensions</th>
+                        <th>Academic Intervention</th>
+                        <th>Behavioral Intervention</th>
+                        <th>Attendance Intervention</th>
                     </tr>
                 </thead>
                 <tbody id="studentTableBody"></tbody>
@@ -52,8 +59,51 @@
             <label for="studentQFs">Quarter F's:</label>
             <input type="number" id="studentQFs">
 
-            <label for="studentComments">Comments:</label>
-            <textarea id="studentComments"></textarea>
+            <label for="studentELA">ELA STAR Band:</label>
+            <select id="studentELA">
+                <option>Urgent Intervention</option>
+                <option>Intervention</option>
+                <option>On Watch</option>
+                <option>At/Above Grade Level</option>
+            </select>
+
+            <label for="studentMath">Math STAR Band:</label>
+            <select id="studentMath">
+                <option>Urgent Intervention</option>
+                <option>Intervention</option>
+                <option>On Watch</option>
+                <option>At/Above Grade Level</option>
+            </select>
+
+            <label for="studentReferrals">Referrals:</label>
+            <input type="number" id="studentReferrals">
+
+            <label for="studentSuspensions">Suspensions:</label>
+            <input type="number" id="studentSuspensions">
+
+            <label for="studentAcademic">Academic Intervention:</label>
+            <select id="studentAcademic">
+                <option>None</option>
+                <option>Tier 1</option>
+                <option>Tier 2</option>
+                <option>Tier 3</option>
+            </select>
+
+            <label for="studentBehavioral">Behavioral Intervention:</label>
+            <select id="studentBehavioral">
+                <option>None</option>
+                <option>Tier 1</option>
+                <option>Tier 2</option>
+                <option>Tier 3</option>
+            </select>
+
+            <label for="studentAttendance">Attendance Intervention:</label>
+            <select id="studentAttendance">
+                <option>None</option>
+                <option>Tier 1</option>
+                <option>Tier 2</option>
+                <option>Tier 3</option>
+            </select>
 
             <button onclick="saveStudent()">Save Changes</button>
             <button onclick="goBack()">Back to List</button>
@@ -74,6 +124,13 @@
                     <td>${student.id}</td>
                     <td>${student.grade}</td>
                     <td>${student.qFs}</td>
+                    <td>${student.ela}</td>
+                    <td>${student.math}</td>
+                    <td>${student.referrals}</td>
+                    <td>${student.suspensions}</td>
+                    <td>${student.academic}</td>
+                    <td>${student.behavioral}</td>
+                    <td>${student.attendance}</td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -88,7 +145,13 @@
                 document.getElementById("studentName").textContent = currentStudent.name;
                 document.getElementById("studentGrade").value = currentStudent.grade;
                 document.getElementById("studentQFs").value = currentStudent.qFs;
-                document.getElementById("studentComments").value = currentStudent.comments || "";
+                document.getElementById("studentELA").value = currentStudent.ela;
+                document.getElementById("studentMath").value = currentStudent.math;
+                document.getElementById("studentReferrals").value = currentStudent.referrals;
+                document.getElementById("studentSuspensions").value = currentStudent.suspensions;
+                document.getElementById("studentAcademic").value = currentStudent.academic;
+                document.getElementById("studentBehavioral").value = currentStudent.behavioral;
+                document.getElementById("studentAttendance").value = currentStudent.attendance;
 
                 document.getElementById("studentListView").classList.add("hidden");
                 document.getElementById("studentDetailView").classList.remove("hidden");
@@ -99,7 +162,13 @@
             if (currentStudent) {
                 currentStudent.grade = document.getElementById("studentGrade").value;
                 currentStudent.qFs = document.getElementById("studentQFs").value;
-                currentStudent.comments = document.getElementById("studentComments").value;
+                currentStudent.ela = document.getElementById("studentELA").value;
+                currentStudent.math = document.getElementById("studentMath").value;
+                currentStudent.referrals = document.getElementById("studentReferrals").value;
+                currentStudent.suspensions = document.getElementById("studentSuspensions").value;
+                currentStudent.academic = document.getElementById("studentAcademic").value;
+                currentStudent.behavioral = document.getElementById("studentBehavioral").value;
+                currentStudent.attendance = document.getElementById("studentAttendance").value;
 
                 localStorage.setItem(studentsKey, JSON.stringify(students));
                 alert("Changes saved!");
