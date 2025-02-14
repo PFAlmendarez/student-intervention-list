@@ -9,7 +9,8 @@
         .container { width: 100%; margin-left: 0; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; white-space: nowrap; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background-color: #007bff; color: white; }
+        th { background-color: #007bff; color: white; cursor: pointer; }
+        th:hover { background-color: #0056b3; }
         select, textarea { width: 100%; padding: 5px; margin-top: 5px; }
     </style>
 </head>
@@ -19,14 +20,14 @@
         <table>
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Student ID</th>
-                    <th>Grade</th>
-                    <th>Quarter F's</th>
+                    <th onclick="sortTable('name')">Name</th>
+                    <th onclick="sortTable('id')">Student ID</th>
+                    <th onclick="sortTable('grade')">Grade</th>
+                    <th onclick="sortTable('qFs')">Quarter F's</th>
                     <th>ELA STAR Band</th>
                     <th>Math STAR Band</th>
-                    <th>Referrals</th>
-                    <th>Suspensions</th>
+                    <th onclick="sortTable('referrals')">Referrals</th>
+                    <th onclick="sortTable('suspensions')">Suspensions</th>
                     <th>Academic Intervention</th>
                     <th>Behavioral Intervention</th>
                     <th>Attendance Intervention</th>
@@ -41,53 +42,77 @@
     </div>
 
     <script>
-        const students = [];
+        const studentsKey = "studentsData";
+        let students = JSON.parse(localStorage.getItem(studentsKey)) || [];
+        let sortDirection = 1;
+
         const names = ["John Doe", "Jane Smith", "Michael Brown", "Emily Johnson", "Chris Lee", "Anna White", "James Wilson", "Sarah Hall", "David Clark", "Sophia Allen", "Ethan Young", "Olivia King", "Daniel Wright", "Madison Scott", "Jacob Baker", "Isabella Adams", "Matthew Nelson", "Ava Carter", "Andrew Perez", "Charlotte Mitchell"];
+
+        if (students.length === 0) {
+            for (let i = 0; i < 20; i++) {
+                students.push({
+                    id: (10000 + i).toString(),
+                    grade: (6 + (i % 3)).toString(),
+                    name: names[i],
+                    qFs: Math.floor(Math.random() * 5),
+                    ela: "On Watch",
+                    math: "Intervention",
+                    referrals: Math.floor(Math.random() * 6),
+                    suspensions: Math.floor(Math.random() * 3),
+                    academic: "None",
+                    behavioral: "None",
+                    attendance: "None",
+                    sped: false,
+                    el: false,
+                    cost: false,
+                    comments: ""
+                });
+            }
+            localStorage.setItem(studentsKey, JSON.stringify(students));
+        }
         
-        for (let i = 0; i < 20; i++) {
-            students.push({
-                id: (10000 + i).toString(),
-                grade: (6 + (i % 3)).toString(),
-                name: names[i],
-                qFs: Math.floor(Math.random() * 5),
-                ela: ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"][Math.floor(Math.random() * 4)],
-                math: ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"][Math.floor(Math.random() * 4)],
-                referrals: Math.floor(Math.random() * 6),
-                suspensions: Math.floor(Math.random() * 3),
-                academic: ["None", "Tier 1", "Tier 2", "Tier 3"][Math.floor(Math.random() * 4)],
-                behavioral: ["None", "Tier 1", "Tier 2", "Tier 3"][Math.floor(Math.random() * 4)],
-                attendance: ["None", "Tier 1", "Tier 2", "Tier 3"][Math.floor(Math.random() * 4)],
-                sped: Math.random() > 0.8,
-                el: Math.random() > 0.7,
-                cost: Math.random() > 0.5,
-                comments: ""
-            });
+        function saveData() {
+            localStorage.setItem(studentsKey, JSON.stringify(students));
         }
         
         function loadStudents() {
             const tableBody = document.getElementById("studentTableBody");
-            students.forEach(student => {
+            tableBody.innerHTML = "";
+            students.forEach((student, index) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
                     <td>${student.name}</td>
                     <td>${student.id}</td>
                     <td>${student.grade}</td>
                     <td>${student.qFs}</td>
-                    <td><select>${["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"].map(option => `<option ${option === student.ela ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
-                    <td><select>${["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"].map(option => `<option ${option === student.math ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
+                    <td><select onchange="updateStudent(${index}, 'ela', this.value)">${["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"].map(option => `<option ${option === student.ela ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
+                    <td><select onchange="updateStudent(${index}, 'math', this.value)">${["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"].map(option => `<option ${option === student.math ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
                     <td>${student.referrals}</td>
                     <td>${student.suspensions}</td>
-                    <td><select>${["None", "Tier 1", "Tier 2", "Tier 3"].map(option => `<option ${option === student.academic ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
-                    <td><select>${["None", "Tier 1", "Tier 2", "Tier 3"].map(option => `<option ${option === student.behavioral ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
-                    <td><select>${["None", "Tier 1", "Tier 2", "Tier 3"].map(option => `<option ${option === student.attendance ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
-                    <td><input type="checkbox" ${student.sped ? "checked" : ""}></td>
-                    <td><input type="checkbox" ${student.el ? "checked" : ""}></td>
-                    <td><input type="checkbox" ${student.cost ? "checked" : ""}></td>
-                    <td><textarea>${student.comments}</textarea></td>
+                    <td><select onchange="updateStudent(${index}, 'academic', this.value)">${["None", "Tier 1", "Tier 2", "Tier 3"].map(option => `<option ${option === student.academic ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
+                    <td><select onchange="updateStudent(${index}, 'behavioral', this.value)">${["None", "Tier 1", "Tier 2", "Tier 3"].map(option => `<option ${option === student.behavioral ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
+                    <td><select onchange="updateStudent(${index}, 'attendance', this.value)">${["None", "Tier 1", "Tier 2", "Tier 3"].map(option => `<option ${option === student.attendance ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
+                    <td><input type="checkbox" ${student.sped ? "checked" : ""} onchange="updateStudent(${index}, 'sped', this.checked)"></td>
+                    <td><input type="checkbox" ${student.el ? "checked" : ""} onchange="updateStudent(${index}, 'el', this.checked)"></td>
+                    <td><input type="checkbox" ${student.cost ? "checked" : ""} onchange="updateStudent(${index}, 'cost', this.checked)"></td>
+                    <td><textarea oninput="updateStudent(${index}, 'comments', this.value)">${student.comments}</textarea></td>
                 `;
                 tableBody.appendChild(row);
             });
         }
+        
+        function updateStudent(index, field, value) {
+            students[index][field] = value;
+            saveData();
+        }
+        
+        function sortTable(field) {
+            students.sort((a, b) => (a[field] > b[field] ? sortDirection : -sortDirection));
+            sortDirection *= -1;
+            saveData();
+            loadStudents();
+        }
+        
         document.addEventListener("DOMContentLoaded", loadStudents);
     </script>
 </body>
