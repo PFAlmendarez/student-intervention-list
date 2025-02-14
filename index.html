@@ -126,7 +126,7 @@
         }
 
         function createDropdown(index, field, value, options, isStarBand) {
-            return `<select class="${isStarBand ? 'star-dropdown' : 'tier-default'}" onchange="updateStudent(${index}, '${field}', this.value); ${isStarBand ? 'updateDropdownColor(this);' : ''}">
+            return `<select class="${isStarBand ? 'star-dropdown' : 'tier-default'}" onchange="updateStudent(${index}, '${field}', this.value); updateDropdownColor(this);">
                 ${options.map(option => `<option value="${option}" ${option === value ? 'selected' : ''}>${option}</option>`).join('')}
             </select>`;
         }
@@ -138,17 +138,25 @@
                 "On Watch": "blue",
                 "At/Above Grade Level": "green"
             };
-            select.style.backgroundColor = colors[select.value] || "white"; 
-            select.style.color = select.value === "Intervention" ? "black" : "white";
+            if (colors[select.value]) {
+                select.style.backgroundColor = colors[select.value];
+                select.style.color = select.value === "Intervention" ? "black" : "white";
+            } else {
+                select.style.backgroundColor = "white";
+                select.style.color = "black";
+            }
         }
 
         function updateStudent(index, field, value) {
             students[index][field] = value;
             saveData();
-            updateDropdownColor(document.querySelector(`select:nth-child(${index + 1})`)); // Update color after change
+            updateDropdownColor(document.querySelectorAll("select")[index * 5]); // Update color instantly
         }
 
-        document.addEventListener("DOMContentLoaded", loadStudents);
+        document.addEventListener("DOMContentLoaded", () => {
+            loadStudents();
+            document.querySelectorAll("select").forEach(updateDropdownColor);
+        });
     </script>
 </body>
 </html>
