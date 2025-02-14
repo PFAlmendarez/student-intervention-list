@@ -36,11 +36,14 @@
         }
         textarea { text-align: center; width: 100%; }
 
-        /* Color-coded dropdown selections */
+        /* STAR Band Colors */
         .urgent { background-color: red !important; color: white !important; }
         .intervention { background-color: yellow !important; color: black !important; }
         .watch { background-color: blue !important; color: white !important; }
         .above { background-color: green !important; color: white !important; }
+
+        /* Default color for Intervention dropdowns */
+        .tier-default { background-color: white !important; color: black !important; }
 
         @media (max-width: 768px) {
             .header { flex-direction: column; text-align: center; }
@@ -123,7 +126,7 @@
         }
 
         function createDropdown(index, field, value, options, isStarBand) {
-            return `<select onchange="updateStudent(${index}, '${field}', this.value); ${isStarBand ? 'updateDropdownColor(this);' : ''}">
+            return `<select class="${isStarBand ? 'star-dropdown' : 'tier-default'}" onchange="updateStudent(${index}, '${field}', this.value); ${isStarBand ? 'updateDropdownColor(this);' : ''}">
                 ${options.map(option => `<option value="${option}" ${option === value ? 'selected' : ''}>${option}</option>`).join('')}
             </select>`;
         }
@@ -135,7 +138,7 @@
                 "On Watch": "blue",
                 "At/Above Grade Level": "green"
             };
-            select.style.backgroundColor = colors[select.value] || "transparent";
+            select.style.backgroundColor = colors[select.value] || "white"; 
             select.style.color = select.value === "Intervention" ? "black" : "white";
         }
 
