@@ -101,7 +101,7 @@
             tableBody.innerHTML = "";
             students.forEach((student, index) => {
                 const row = document.createElement("tr");
-                row.innerHTML = 
+                row.innerHTML = `
                     <td>${student.name}</td>
                     <td>${student.id}</td>
                     <td>${student.grade}</td>
@@ -117,7 +117,7 @@
                     <td><input type="checkbox" ${student.el ? "checked" : ""} onchange="updateStudent(${index}, 'el', this.checked)"></td>
                     <td><input type="checkbox" ${student.cost ? "checked" : ""} onchange="updateStudent(${index}, 'cost', this.checked)"></td>
                     <td><textarea oninput="updateStudent(${index}, 'comments', this.value)">${student.comments}</textarea></td>
-                ;
+                `;
                 tableBody.appendChild(row);
             });
 
@@ -126,9 +126,9 @@
         }
 
         function createDropdown(index, field, value, options, isStarBand) {
-            return <select class="${isStarBand ? 'star-dropdown' : 'tier-default'}" onchange="updateStudent(${index}, '${field}', this.value); updateDropdownColor(this);">
-                ${options.map(option => <option value="${option}" ${option === value ? 'selected' : ''}>${option}</option>).join('')}
-            </select>;
+            return `<select class="${isStarBand ? 'star-dropdown' : 'tier-default'}" onchange="updateStudent(${index}, '${field}', this.value); updateDropdownColor(this);">
+                ${options.map(option => `<option value="${option}" ${option === value ? 'selected' : ''}>${option}</option>`).join('')}
+            </select>`;
         }
 
         function updateDropdownColor(select) {
