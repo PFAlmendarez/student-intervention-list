@@ -6,21 +6,44 @@
     <title>Student Concerns Intervention List</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
-        .header { display: flex; align-items: center; justify-content: center; position: relative; padding: 20px 0; text-align: center; color: #8C1515; }
-        .header img { position: absolute; left: 20px; width: 80px; height: auto; }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 20px 0;
+            text-align: center;
+            color: #8C1515;
+        }
+        .header img {
+            position: absolute;
+            left: 20px;
+            width: 80px;
+            height: auto;
+        }
         .container { width: 100%; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; white-space: nowrap; text-align: center; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: center; max-width: 150px; word-wrap: break-word; }
         th { background-color: #8C1515; color: white; cursor: pointer; position: relative; padding: 10px; font-size: 14px; }
         th:hover { background-color: #600d0d; }
-        select, textarea { width: 100%; padding: 5px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
-        .hidden { display: none; }
+        select { 
+            padding: 5px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            text-align: center; 
+            width: 100%; 
+            font-weight: bold; 
+        }
+        textarea { text-align: center; width: 100%; }
 
         /* STAR Band Colors */
         .urgent { background-color: red !important; color: white !important; }
         .intervention { background-color: yellow !important; color: black !important; }
         .watch { background-color: blue !important; color: white !important; }
         .above { background-color: green !important; color: white !important; }
+
+        /* Default color for Intervention dropdowns */
+        .tier-default { background-color: white !important; color: black !important; }
 
         @media (max-width: 768px) {
             .header { flex-direction: column; text-align: center; }
@@ -36,135 +59,104 @@
 
     <div class="container">
         <h2>Student Concerns Intervention List</h2>
-
-        <!-- STUDENT LIST VIEW -->
-        <div id="studentListView">
-            <table>
-                <thead>
-                    <tr>
-                        <th onclick="sortTable('name')">Name ⬍</th>
-                        <th onclick="sortTable('id')">Student ID ⬍</th>
-                        <th onclick="sortTable('grade')">Grade ⬍</th>
-                        <th onclick="sortTable('qFs')">Quarter F's ⬍</th>
-                        <th>ELA STAR Band</th>
-                        <th>Math STAR Band</th>
-                        <th onclick="sortTable('referrals')">Referrals ⬍</th>
-                        <th onclick="sortTable('suspensions')">Suspensions ⬍</th>
-                        <th>Academic Intervention</th>
-                        <th>Behavioral Intervention</th>
-                        <th>Attendance Intervention</th>
-                        <th>SPED</th>
-                        <th>EL Student</th>
-                        <th>COST Referral</th>
-                        <th>Comments</th>
-                    </tr>
-                </thead>
-                <tbody id="studentTableBody"></tbody>
-            </table>
+        
+        <div class="controls">
+            <input type="text" id="search" placeholder="Search students..." onkeyup="filterStudents()">
         </div>
 
-        <!-- STUDENT DETAIL VIEW (Hidden by Default) -->
-        <div id="studentDetailView" class="hidden">
-            <h2 id="studentName"></h2>
-
-            <label for="studentGrade">Grade:</label>
-            <input type="number" id="studentGrade">
-
-            <label for="studentQFs">Quarter F's:</label>
-            <input type="number" id="studentQFs">
-
-            <label for="studentELA">ELA STAR Band:</label>
-            <select id="studentELA" onchange="updateDropdownColor(this)">
-                <option>Urgent Intervention</option>
-                <option>Intervention</option>
-                <option>On Watch</option>
-                <option>At/Above Grade Level</option>
-            </select>
-
-            <label for="studentMath">Math STAR Band:</label>
-            <select id="studentMath" onchange="updateDropdownColor(this)">
-                <option>Urgent Intervention</option>
-                <option>Intervention</option>
-                <option>On Watch</option>
-                <option>At/Above Grade Level</option>
-            </select>
-
-            <label><input type="checkbox" id="studentSPED"> SPED</label>
-            <label><input type="checkbox" id="studentEL"> EL Student</label>
-            <label><input type="checkbox" id="studentCOST"> COST Referral</label>
-
-            <label for="studentComments">Comments:</label>
-            <textarea id="studentComments"></textarea>
-
-            <button onclick="saveStudent()">Save Changes</button>
-            <button onclick="goBack()">Back to List</button>
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th onclick="sortTable('name')">Name ⬍</th>
+                    <th onclick="sortTable('id')">Student ID ⬍</th>
+                    <th onclick="sortTable('grade')">Grade ⬍</th>
+                    <th onclick="sortTable('qFs')">Quarter F's ⬍</th>
+                    <th>ELA STAR Band</th>
+                    <th>Math STAR Band</th>
+                    <th onclick="sortTable('referrals')">Referrals ⬍</th>
+                    <th onclick="sortTable('suspensions')">Suspensions ⬍</th>
+                    <th>Academic Intervention</th>
+                    <th>Behavioral Intervention</th>
+                    <th>Attendance Intervention</th>
+                    <th>SPED</th>
+                    <th>EL Student</th>
+                    <th>COST Referral</th>
+                    <th>Comments</th>
+                </tr>
+            </thead>
+            <tbody id="studentTableBody"></tbody>
+        </table>
     </div>
 
     <script>
         const studentsKey = "studentsData";
         let students = JSON.parse(localStorage.getItem(studentsKey)) || [];
 
+        function saveData() {
+            localStorage.setItem(studentsKey, JSON.stringify(students));
+        }
+        
         function loadStudents() {
             const tableBody = document.getElementById("studentTableBody");
             tableBody.innerHTML = "";
-            students.forEach(student => {
+            students.forEach((student, index) => {
                 const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td><a href="#" onclick="viewStudent('${student.id}')">${student.name}</a></td>
+                row.innerHTML = 
+                    <td>${student.name}</td>
                     <td>${student.id}</td>
                     <td>${student.grade}</td>
                     <td>${student.qFs}</td>
-                    <td class="${getColorClass(student.ela)}">${student.ela}</td>
-                    <td class="${getColorClass(student.math)}">${student.math}</td>
+                    <td>${createDropdown(index, 'ela', student.ela, ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"], true)}</td>
+                    <td>${createDropdown(index, 'math', student.math, ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"], true)}</td>
                     <td>${student.referrals}</td>
                     <td>${student.suspensions}</td>
-                    <td>${student.academic}</td>
-                    <td>${student.behavioral}</td>
-                    <td>${student.attendance}</td>
-                    <td><input type="checkbox" ${student.sped ? "checked" : ""} disabled></td>
-                    <td><input type="checkbox" ${student.el ? "checked" : ""} disabled></td>
-                    <td><input type="checkbox" ${student.cost ? "checked" : ""} disabled></td>
-                    <td>${student.comments || ""}</td>
-                `;
+                    <td>${createDropdown(index, 'academic', student.academic, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
+                    <td>${createDropdown(index, 'behavioral', student.behavioral, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
+                    <td>${createDropdown(index, 'attendance', student.attendance, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
+                    <td><input type="checkbox" ${student.sped ? "checked" : ""} onchange="updateStudent(${index}, 'sped', this.checked)"></td>
+                    <td><input type="checkbox" ${student.el ? "checked" : ""} onchange="updateStudent(${index}, 'el', this.checked)"></td>
+                    <td><input type="checkbox" ${student.cost ? "checked" : ""} onchange="updateStudent(${index}, 'cost', this.checked)"></td>
+                    <td><textarea oninput="updateStudent(${index}, 'comments', this.value)">${student.comments}</textarea></td>
+                ;
                 tableBody.appendChild(row);
             });
+
+            // Apply colors to dropdowns on load
+            document.querySelectorAll("select").forEach(updateDropdownColor);
         }
 
-        function viewStudent(studentId) {
-            let student = students.find(s => s.id === studentId);
-            if (!student) return;
-
-            document.getElementById("studentName").textContent = student.name;
-            document.getElementById("studentGrade").value = student.grade;
-            document.getElementById("studentQFs").value = student.qFs;
-            document.getElementById("studentELA").value = student.ela;
-            document.getElementById("studentMath").value = student.math;
-            document.getElementById("studentSPED").checked = student.sped;
-            document.getElementById("studentEL").checked = student.el;
-            document.getElementById("studentCOST").checked = student.cost;
-            document.getElementById("studentComments").value = student.comments || "";
-
-            document.getElementById("studentListView").classList.add("hidden");
-            document.getElementById("studentDetailView").classList.remove("hidden");
+        function createDropdown(index, field, value, options, isStarBand) {
+            return <select class="${isStarBand ? 'star-dropdown' : 'tier-default'}" onchange="updateStudent(${index}, '${field}', this.value); updateDropdownColor(this);">
+                ${options.map(option => <option value="${option}" ${option === value ? 'selected' : ''}>${option}</option>).join('')}
+            </select>;
         }
 
-        function saveStudent() {
-            localStorage.setItem(studentsKey, JSON.stringify(students));
-            alert("Changes saved!");
+        function updateDropdownColor(select) {
+            const colors = {
+                "Urgent Intervention": "red",
+                "Intervention": "yellow",
+                "On Watch": "blue",
+                "At/Above Grade Level": "green"
+            };
+            if (colors[select.value]) {
+                select.style.backgroundColor = colors[select.value];
+                select.style.color = select.value === "Intervention" ? "black" : "white";
+            } else {
+                select.style.backgroundColor = "white";
+                select.style.color = "black";
+            }
         }
 
-        function goBack() {
-            document.getElementById("studentListView").classList.remove("hidden");
-            document.getElementById("studentDetailView").classList.add("hidden");
+        function updateStudent(index, field, value) {
+            students[index][field] = value;
+            saveData();
+            updateDropdownColor(document.querySelectorAll("select")[index * 5]); // Update color instantly
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
             loadStudents();
-        }
-
-        function getColorClass(value) {
-            return value.toLowerCase().replace(/ /g, "-");
-        }
-
-        document.addEventListener("DOMContentLoaded", loadStudents);
+            document.querySelectorAll("select").forEach(updateDropdownColor);
+        });
     </script>
 </body>
 </html>
