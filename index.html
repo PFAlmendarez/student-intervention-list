@@ -35,12 +35,6 @@
             font-weight: bold; 
         }
         textarea { text-align: center; width: 100%; }
-        
-        /* Color-coded dropdown selections */
-        .urgent { background-color: red !important; color: white !important; }
-        .intervention { background-color: yellow !important; color: black !important; }
-        .watch { background-color: blue !important; color: white !important; }
-        .above { background-color: green !important; color: white !important; }
 
         @media (max-width: 768px) {
             .header { flex-direction: column; text-align: center; }
@@ -103,40 +97,26 @@
                     <td>${student.id}</td>
                     <td>${student.grade}</td>
                     <td>${student.qFs}</td>
-                    <td>${createDropdown(index, 'ela', student.ela)}</td>
-                    <td>${createDropdown(index, 'math', student.math)}</td>
+                    <td>${createDropdown(index, 'ela', student.ela, ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"])}</td>
+                    <td>${createDropdown(index, 'math', student.math, ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"])}</td>
                     <td>${student.referrals}</td>
                     <td>${student.suspensions}</td>
-                    <td>${createDropdown(index, 'academic', student.academic)}</td>
-                    <td>${createDropdown(index, 'behavioral', student.behavioral)}</td>
-                    <td>${createDropdown(index, 'attendance', student.attendance)}</td>
+                    <td>${createDropdown(index, 'academic', student.academic, ["None", "Tier 1", "Tier 2", "Tier 3"])}</td>
+                    <td>${createDropdown(index, 'behavioral', student.behavioral, ["None", "Tier 1", "Tier 2", "Tier 3"])}</td>
+                    <td>${createDropdown(index, 'attendance', student.attendance, ["None", "Tier 1", "Tier 2", "Tier 3"])}</td>
                     <td><input type="checkbox" ${student.sped ? "checked" : ""} onchange="updateStudent(${index}, 'sped', this.checked)"></td>
                     <td><input type="checkbox" ${student.el ? "checked" : ""} onchange="updateStudent(${index}, 'el', this.checked)"></td>
                     <td><input type="checkbox" ${student.cost ? "checked" : ""} onchange="updateStudent(${index}, 'cost', this.checked)"></td>
                     <td><textarea oninput="updateStudent(${index}, 'comments', this.value)">${student.comments}</textarea></td>
                 `;
                 tableBody.appendChild(row);
-                updateDropdownColor(document.querySelectorAll("select")[index * 5]); // Update colors
-                updateDropdownColor(document.querySelectorAll("select")[index * 5 + 1]); // Update colors
             });
         }
 
-        function createDropdown(index, field, value) {
-            return `<select onchange="updateStudent(${index}, '${field}', this.value); updateDropdownColor(this);">
-                ${["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"]
-                    .map(option => `<option value="${option}" ${option === value ? 'selected' : ''}>${option}</option>`).join('')}
+        function createDropdown(index, field, value, options) {
+            return `<select onchange="updateStudent(${index}, '${field}', this.value);">
+                ${options.map(option => `<option value="${option}" ${option === value ? 'selected' : ''}>${option}</option>`).join('')}
             </select>`;
-        }
-
-        function updateDropdownColor(select) {
-            const colors = {
-                "Urgent Intervention": "red",
-                "Intervention": "yellow",
-                "On Watch": "blue",
-                "At/Above Grade Level": "green"
-            };
-            select.style.backgroundColor = colors[select.value];
-            select.style.color = select.value === "Intervention" ? "black" : "white";
         }
 
         function updateStudent(index, field, value) {
