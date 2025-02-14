@@ -6,6 +6,20 @@
     <title>Student Concerns Intervention List</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .header img {
+            position: absolute;
+            left: 20px;
+            width: 80px;
+            height: auto;
+        }
         .container { width: 100%; margin-left: 0; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; white-space: nowrap; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
@@ -15,8 +29,12 @@
     </style>
 </head>
 <body>
+    <div class="header">
+        <img src="muir_logo.png" alt="John Muir Middle School Logo">
+        <h1>John Muir Middle School</h1>
+    </div>
     <div class="container">
-        <h1>Student Concerns Intervention List</h1>
+        <h2>Student Concerns Intervention List</h2>
         <table>
             <thead>
                 <tr>
@@ -46,31 +64,6 @@
         let students = JSON.parse(localStorage.getItem(studentsKey)) || [];
         let sortDirection = 1;
 
-        const names = ["John Doe", "Jane Smith", "Michael Brown", "Emily Johnson", "Chris Lee", "Anna White", "James Wilson", "Sarah Hall", "David Clark", "Sophia Allen", "Ethan Young", "Olivia King", "Daniel Wright", "Madison Scott", "Jacob Baker", "Isabella Adams", "Matthew Nelson", "Ava Carter", "Andrew Perez", "Charlotte Mitchell"];
-
-        if (students.length === 0) {
-            for (let i = 0; i < 20; i++) {
-                students.push({
-                    id: (10000 + i).toString(),
-                    grade: (6 + (i % 3)).toString(),
-                    name: names[i],
-                    qFs: Math.floor(Math.random() * 5),
-                    ela: "On Watch",
-                    math: "Intervention",
-                    referrals: Math.floor(Math.random() * 6),
-                    suspensions: Math.floor(Math.random() * 3),
-                    academic: "None",
-                    behavioral: "None",
-                    attendance: "None",
-                    sped: false,
-                    el: false,
-                    cost: false,
-                    comments: ""
-                });
-            }
-            localStorage.setItem(studentsKey, JSON.stringify(students));
-        }
-        
         function saveData() {
             localStorage.setItem(studentsKey, JSON.stringify(students));
         }
