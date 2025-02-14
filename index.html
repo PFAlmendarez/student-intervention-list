@@ -13,7 +13,7 @@
             position: relative;
             padding: 20px 0;
             text-align: center;
-            color: #8C1515; /* Cardinal Red */
+            color: #8C1515;
         }
         .header img {
             position: absolute;
@@ -23,9 +23,10 @@
         }
         .container { width: 100%; margin-left: 0; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; white-space: nowrap; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background-color: #8C1515; color: white; cursor: pointer; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; word-wrap: break-word; max-width: 150px; }
+        th { background-color: #8C1515; color: white; cursor: pointer; position: relative; }
         th:hover { background-color: #600d0d; }
+        th .sort-arrow { position: absolute; right: 10px; font-size: 14px; }
         select, textarea { width: 100%; padding: 5px; margin-top: 5px; }
     </style>
 </head>
@@ -39,14 +40,14 @@
         <table>
             <thead>
                 <tr>
-                    <th onclick="sortTable('name')">Name</th>
-                    <th onclick="sortTable('id')">Student ID</th>
-                    <th onclick="sortTable('grade')">Grade</th>
-                    <th onclick="sortTable('qFs')">Quarter F's</th>
+                    <th onclick="sortTable('name')">Name <span class="sort-arrow">⬍</span></th>
+                    <th onclick="sortTable('id')">Student ID <span class="sort-arrow">⬍</span></th>
+                    <th onclick="sortTable('grade')">Grade <span class="sort-arrow">⬍</span></th>
+                    <th onclick="sortTable('qFs')">Quarter F's <span class="sort-arrow">⬍</span></th>
                     <th>ELA STAR Band</th>
                     <th>Math STAR Band</th>
-                    <th onclick="sortTable('referrals')">Referrals</th>
-                    <th onclick="sortTable('suspensions')">Suspensions</th>
+                    <th onclick="sortTable('referrals')">Referrals <span class="sort-arrow">⬍</span></th>
+                    <th onclick="sortTable('suspensions')">Suspensions <span class="sort-arrow">⬍</span></th>
                     <th>Academic Intervention</th>
                     <th>Behavioral Intervention</th>
                     <th>Attendance Intervention</th>
@@ -63,7 +64,7 @@
     <script>
         const studentsKey = "studentsData";
         let students = JSON.parse(localStorage.getItem(studentsKey)) || [];
-        let sortDirection = 1;
+        let sortDirection = {};
 
         function saveData() {
             localStorage.setItem(studentsKey, JSON.stringify(students));
@@ -101,8 +102,8 @@
         }
         
         function sortTable(field) {
-            students.sort((a, b) => (a[field] > b[field] ? sortDirection : -sortDirection));
-            sortDirection *= -1;
+            sortDirection[field] = sortDirection[field] === 'asc' ? 'desc' : 'asc';
+            students.sort((a, b) => sortDirection[field] === 'asc' ? (a[field] > b[field] ? 1 : -1) : (a[field] < b[field] ? 1 : -1));
             saveData();
             loadStudents();
         }
@@ -111,3 +112,4 @@
     </script>
 </body>
 </html>
+
