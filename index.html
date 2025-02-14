@@ -117,6 +117,9 @@
                 `;
                 tableBody.appendChild(row);
             });
+
+            // Apply colors to dropdowns on load
+            document.querySelectorAll("select").forEach(updateDropdownColor);
         }
 
         function createDropdown(index, field, value, options, isStarBand) {
@@ -132,13 +135,14 @@
                 "On Watch": "blue",
                 "At/Above Grade Level": "green"
             };
-            select.style.backgroundColor = colors[select.value];
+            select.style.backgroundColor = colors[select.value] || "transparent";
             select.style.color = select.value === "Intervention" ? "black" : "white";
         }
 
         function updateStudent(index, field, value) {
             students[index][field] = value;
             saveData();
+            updateDropdownColor(document.querySelector(`select:nth-child(${index + 1})`)); // Update color after change
         }
 
         document.addEventListener("DOMContentLoaded", loadStudents);
