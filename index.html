@@ -6,7 +6,8 @@
     <title>Student Concerns Intervention List</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
-        .header { text-align: center; color: #8C1515; padding: 20px 0; }
+        .header { display: flex; align-items: center; justify-content: center; position: relative; padding: 20px 0; text-align: center; color: #8C1515; }
+        .header img { position: absolute; left: 20px; width: 80px; height: auto; }
         .container { width: 90%; max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; text-align: center; }
         th, td { border: 1px solid #ddd; padding: 10px; }
@@ -18,10 +19,22 @@
         input, select, textarea { width: 100%; padding: 5px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
         button { background-color: #8C1515; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 20px; }
         button:hover { background-color: #600d0d; }
+
+        /* Color-coded STAR Band selections */
+        .urgent { background-color: red !important; color: white !important; }
+        .intervention { background-color: yellow !important; color: black !important; }
+        .watch { background-color: blue !important; color: white !important; }
+        .above { background-color: green !important; color: white !important; }
+
+        @media (max-width: 768px) {
+            .header { flex-direction: column; text-align: center; }
+            .header img { position: static; margin-bottom: 10px; }
+        }
     </style>
 </head>
 <body>
     <div class="header">
+        <img src="muir_logo.png" alt="John Muir Middle School Logo">
         <h1>John Muir Middle School</h1>
     </div>
 
@@ -40,9 +53,6 @@
                         <th>Math STAR Band</th>
                         <th>Referrals</th>
                         <th>Suspensions</th>
-                        <th>Academic Intervention</th>
-                        <th>Behavioral Intervention</th>
-                        <th>Attendance Intervention</th>
                     </tr>
                 </thead>
                 <tbody id="studentTableBody"></tbody>
@@ -52,7 +62,7 @@
         <!-- STUDENT DETAIL VIEW (Hidden by Default) -->
         <div id="studentDetailView" class="hidden">
             <h2 id="studentName"></h2>
-            
+
             <label for="studentGrade">Grade:</label>
             <input type="number" id="studentGrade">
 
@@ -60,7 +70,7 @@
             <input type="number" id="studentQFs">
 
             <label for="studentELA">ELA STAR Band:</label>
-            <select id="studentELA">
+            <select id="studentELA" onchange="updateDropdownColor(this)">
                 <option>Urgent Intervention</option>
                 <option>Intervention</option>
                 <option>On Watch</option>
@@ -68,7 +78,7 @@
             </select>
 
             <label for="studentMath">Math STAR Band:</label>
-            <select id="studentMath">
+            <select id="studentMath" onchange="updateDropdownColor(this)">
                 <option>Urgent Intervention</option>
                 <option>Intervention</option>
                 <option>On Watch</option>
@@ -80,30 +90,6 @@
 
             <label for="studentSuspensions">Suspensions:</label>
             <input type="number" id="studentSuspensions">
-
-            <label for="studentAcademic">Academic Intervention:</label>
-            <select id="studentAcademic">
-                <option>None</option>
-                <option>Tier 1</option>
-                <option>Tier 2</option>
-                <option>Tier 3</option>
-            </select>
-
-            <label for="studentBehavioral">Behavioral Intervention:</label>
-            <select id="studentBehavioral">
-                <option>None</option>
-                <option>Tier 1</option>
-                <option>Tier 2</option>
-                <option>Tier 3</option>
-            </select>
-
-            <label for="studentAttendance">Attendance Intervention:</label>
-            <select id="studentAttendance">
-                <option>None</option>
-                <option>Tier 1</option>
-                <option>Tier 2</option>
-                <option>Tier 3</option>
-            </select>
 
             <button onclick="saveStudent()">Save Changes</button>
             <button onclick="goBack()">Back to List</button>
@@ -117,7 +103,7 @@
         function loadStudents() {
             const tableBody = document.getElementById("studentTableBody");
             tableBody.innerHTML = "";
-            students.forEach((student, index) => {
+            students.forEach(student => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
                     <td><a onclick="viewStudent('${student.id}')">${student.name}</a></td>
@@ -128,9 +114,6 @@
                     <td>${student.math}</td>
                     <td>${student.referrals}</td>
                     <td>${student.suspensions}</td>
-                    <td>${student.academic}</td>
-                    <td>${student.behavioral}</td>
-                    <td>${student.attendance}</td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -149,12 +132,12 @@
                 document.getElementById("studentMath").value = currentStudent.math;
                 document.getElementById("studentReferrals").value = currentStudent.referrals;
                 document.getElementById("studentSuspensions").value = currentStudent.suspensions;
-                document.getElementById("studentAcademic").value = currentStudent.academic;
-                document.getElementById("studentBehavioral").value = currentStudent.behavioral;
-                document.getElementById("studentAttendance").value = currentStudent.attendance;
 
                 document.getElementById("studentListView").classList.add("hidden");
                 document.getElementById("studentDetailView").classList.remove("hidden");
+
+                updateDropdownColor(document.getElementById("studentELA"));
+                updateDropdownColor(document.getElementById("studentMath"));
             }
         }
 
@@ -166,9 +149,6 @@
                 currentStudent.math = document.getElementById("studentMath").value;
                 currentStudent.referrals = document.getElementById("studentReferrals").value;
                 currentStudent.suspensions = document.getElementById("studentSuspensions").value;
-                currentStudent.academic = document.getElementById("studentAcademic").value;
-                currentStudent.behavioral = document.getElementById("studentBehavioral").value;
-                currentStudent.attendance = document.getElementById("studentAttendance").value;
 
                 localStorage.setItem(studentsKey, JSON.stringify(students));
                 alert("Changes saved!");
@@ -179,6 +159,10 @@
             document.getElementById("studentListView").classList.remove("hidden");
             document.getElementById("studentDetailView").classList.add("hidden");
             loadStudents();
+        }
+
+        function updateDropdownColor(select) {
+            select.className = select.value.toLowerCase().replace(/ /g, "-");
         }
 
         document.addEventListener("DOMContentLoaded", loadStudents);
