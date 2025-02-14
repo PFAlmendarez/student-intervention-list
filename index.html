@@ -23,15 +23,25 @@
         }
         .container { width: 100%; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; white-space: nowrap; text-align: center; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; max-width: 150px; }
-        th { background-color: #8C1515; color: white; cursor: pointer; position: relative; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; max-width: 150px; word-wrap: break-word; }
+        th { background-color: #8C1515; color: white; cursor: pointer; position: relative; padding: 10px; font-size: 14px; }
         th:hover { background-color: #600d0d; }
-        select { padding: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
+        select { 
+            padding: 5px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            text-align: center; 
+            width: 100%; 
+            font-weight: bold; 
+        }
         textarea { text-align: center; width: 100%; }
-        .urgent { background-color: red; color: white; }
-        .intervention { background-color: yellow; color: black; }
-        .watch { background-color: blue; color: white; }
-        .above { background-color: green; color: white; }
+        
+        /* Color-coded dropdown selections */
+        .urgent { background-color: red !important; color: white !important; }
+        .intervention { background-color: yellow !important; color: black !important; }
+        .watch { background-color: blue !important; color: white !important; }
+        .above { background-color: green !important; color: white !important; }
+
         @media (max-width: 768px) {
             .header { flex-direction: column; text-align: center; }
             .header img { position: static; margin-bottom: 10px; }
@@ -97,26 +107,17 @@
                     <td>${createDropdown(index, 'math', student.math)}</td>
                     <td>${student.referrals}</td>
                     <td>${student.suspensions}</td>
-                    <td><select onchange="updateStudent(${index}, 'academic', this.value)">
-                        ${["None", "Tier 1", "Tier 2", "Tier 3"]
-                            .map(option => `<option ${option === student.academic ? 'selected' : ''}>${option}</option>`).join('')}
-                    </select></td>
-                    <td><select onchange="updateStudent(${index}, 'behavioral', this.value)">
-                        ${["None", "Tier 1", "Tier 2", "Tier 3"]
-                            .map(option => `<option ${option === student.behavioral ? 'selected' : ''}>${option}</option>`).join('')}
-                    </select></td>
-                    <td><select onchange="updateStudent(${index}, 'attendance', this.value)">
-                        ${["None", "Tier 1", "Tier 2", "Tier 3"]
-                            .map(option => `<option ${option === student.attendance ? 'selected' : ''}>${option}</option>`).join('')}
-                    </select></td>
+                    <td>${createDropdown(index, 'academic', student.academic)}</td>
+                    <td>${createDropdown(index, 'behavioral', student.behavioral)}</td>
+                    <td>${createDropdown(index, 'attendance', student.attendance)}</td>
                     <td><input type="checkbox" ${student.sped ? "checked" : ""} onchange="updateStudent(${index}, 'sped', this.checked)"></td>
                     <td><input type="checkbox" ${student.el ? "checked" : ""} onchange="updateStudent(${index}, 'el', this.checked)"></td>
                     <td><input type="checkbox" ${student.cost ? "checked" : ""} onchange="updateStudent(${index}, 'cost', this.checked)"></td>
                     <td><textarea oninput="updateStudent(${index}, 'comments', this.value)">${student.comments}</textarea></td>
                 `;
                 tableBody.appendChild(row);
-                updateDropdownColor(document.querySelectorAll("select")[index * 2]); // Update colors
-                updateDropdownColor(document.querySelectorAll("select")[index * 2 + 1]); // Update colors
+                updateDropdownColor(document.querySelectorAll("select")[index * 5]); // Update colors
+                updateDropdownColor(document.querySelectorAll("select")[index * 5 + 1]); // Update colors
             });
         }
 
