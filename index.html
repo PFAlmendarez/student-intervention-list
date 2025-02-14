@@ -41,13 +41,28 @@
     </div>
 
     <script>
-        const students = [
-            { id: "12345", grade: "7", name: "John Doe", qFs: 6, ela: "On Watch", math: "Intervention", referrals: 3, suspensions: 1, academic: "None", behavioral: "None", attendance: "None", sped: false, el: false, cost: false, comments: "" },
-            { id: "67890", grade: "6", name: "Jane Smith", qFs: 4, ela: "At/Above Grade Level", math: "On Watch", referrals: 2, suspensions: 0, academic: "Tier 1", behavioral: "None", attendance: "Tier 2", sped: true, el: true, cost: true, comments: "Needs extra tutoring support." }
-        ];
+        const students = [];
+        const names = ["John Doe", "Jane Smith", "Michael Brown", "Emily Johnson", "Chris Lee", "Anna White", "James Wilson", "Sarah Hall", "David Clark", "Sophia Allen", "Ethan Young", "Olivia King", "Daniel Wright", "Madison Scott", "Jacob Baker", "Isabella Adams", "Matthew Nelson", "Ava Carter", "Andrew Perez", "Charlotte Mitchell"];
         
-        const interventionOptions = ["None", "Tier 1", "Tier 2", "Tier 3"];
-        const starBandOptions = ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"];
+        for (let i = 0; i < 20; i++) {
+            students.push({
+                id: (10000 + i).toString(),
+                grade: (6 + (i % 3)).toString(),
+                name: names[i],
+                qFs: Math.floor(Math.random() * 5),
+                ela: ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"][Math.floor(Math.random() * 4)],
+                math: ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"][Math.floor(Math.random() * 4)],
+                referrals: Math.floor(Math.random() * 6),
+                suspensions: Math.floor(Math.random() * 3),
+                academic: ["None", "Tier 1", "Tier 2", "Tier 3"][Math.floor(Math.random() * 4)],
+                behavioral: ["None", "Tier 1", "Tier 2", "Tier 3"][Math.floor(Math.random() * 4)],
+                attendance: ["None", "Tier 1", "Tier 2", "Tier 3"][Math.floor(Math.random() * 4)],
+                sped: Math.random() > 0.8,
+                el: Math.random() > 0.7,
+                cost: Math.random() > 0.5,
+                comments: ""
+            });
+        }
         
         function loadStudents() {
             const tableBody = document.getElementById("studentTableBody");
@@ -58,13 +73,13 @@
                     <td>${student.id}</td>
                     <td>${student.grade}</td>
                     <td>${student.qFs}</td>
-                    <td><select>${starBandOptions.map(option => `<option ${option === student.ela ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
-                    <td><select>${starBandOptions.map(option => `<option ${option === student.math ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
+                    <td><select>${["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"].map(option => `<option ${option === student.ela ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
+                    <td><select>${["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"].map(option => `<option ${option === student.math ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
                     <td>${student.referrals}</td>
                     <td>${student.suspensions}</td>
-                    <td><select>${interventionOptions.map(option => `<option ${option === student.academic ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
-                    <td><select>${interventionOptions.map(option => `<option ${option === student.behavioral ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
-                    <td><select>${interventionOptions.map(option => `<option ${option === student.attendance ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
+                    <td><select>${["None", "Tier 1", "Tier 2", "Tier 3"].map(option => `<option ${option === student.academic ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
+                    <td><select>${["None", "Tier 1", "Tier 2", "Tier 3"].map(option => `<option ${option === student.behavioral ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
+                    <td><select>${["None", "Tier 1", "Tier 2", "Tier 3"].map(option => `<option ${option === student.attendance ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
                     <td><input type="checkbox" ${student.sped ? "checked" : ""}></td>
                     <td><input type="checkbox" ${student.el ? "checked" : ""}></td>
                     <td><input type="checkbox" ${student.cost ? "checked" : ""}></td>
