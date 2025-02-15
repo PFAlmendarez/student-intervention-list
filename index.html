@@ -124,7 +124,7 @@
                     <td>${student.sped}</td>
                     <td>${student.el}</td>
                     <td>${student.cost}</td>
-                    <td>${student.comments}</td>
+                    <td><textarea id="comments-${index}" name="comments-${index}" oninput="updateStudent(${index}, 'comments', this.value)">${student.comments}</textarea></td>
                 `;
                 tableBody.appendChild(row);
             });
