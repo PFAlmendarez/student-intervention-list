@@ -91,72 +91,113 @@
 
     <script>
         const studentsKey = "studentsData";
-        let students = JSON.parse(localStorage.getItem(studentsKey)) || [];
 
-        function saveData() {
-            localStorage.setItem(studentsKey, JSON.stringify(students));
+// Preload with sample data if localStorage is empty
+if (!localStorage.getItem(studentsKey)) {
+    const defaultStudents = [
+        {
+            name: "John Doe",
+            id: "12345",
+            grade: "7",
+            qFs: "2",
+            ela: "Intervention",
+            math: "On Watch",
+            referrals: "1",
+            suspensions: "0",
+            academic: "None",
+            behavioral: "Tier 1",
+            attendance: "None",
+            sped: false,
+            el: false,
+            cost: false,
+            comments: ""
+        },
+        {
+            name: "Jane Smith",
+            id: "67890",
+            grade: "8",
+            qFs: "0",
+            ela: "At/Above Grade Level",
+            math: "At/Above Grade Level",
+            referrals: "0",
+            suspensions: "0",
+            academic: "None",
+            behavioral: "None",
+            attendance: "None",
+            sped: false,
+            el: true,
+            cost: false,
+            comments: ""
         }
-        
-        function loadStudents() {
-            const tableBody = document.getElementById("studentTableBody");
-            tableBody.innerHTML = "";
-            students.forEach((student, index) => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${student.name}</td>
-                    <td>${student.id}</td>
-                    <td>${student.grade}</td>
-                    <td>${student.qFs}</td>
-                    <td>${createDropdown(index, 'ela', student.ela, ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"], true)}</td>
-                    <td>${createDropdown(index, 'math', student.math, ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"], true)}</td>
-                    <td>${student.referrals}</td>
-                    <td>${student.suspensions}</td>
-                    <td>${createDropdown(index, 'academic', student.academic, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
-                    <td>${createDropdown(index, 'behavioral', student.behavioral, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
-                    <td>${createDropdown(index, 'attendance', student.attendance, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
-                    <td><input type="checkbox" ${student.sped ? "checked" : ""} onchange="updateStudent(${index}, 'sped', this.checked)"></td>
-                    <td><input type="checkbox" ${student.el ? "checked" : ""} onchange="updateStudent(${index}, 'el', this.checked)"></td>
-                    <td><input type="checkbox" ${student.cost ? "checked" : ""} onchange="updateStudent(${index}, 'cost', this.checked)"></td>
-                    <td><textarea oninput="updateStudent(${index}, 'comments', this.value)">${student.comments}</textarea></td>
-                `;
-                tableBody.appendChild(row);
-            });
+    ];
+    localStorage.setItem(studentsKey, JSON.stringify(defaultStudents));
+}
 
-            // Apply colors to dropdowns on load
-            document.querySelectorAll("select").forEach(updateDropdownColor);
-        }
+let students = JSON.parse(localStorage.getItem(studentsKey)) || [];
 
-        function createDropdown(index, field, value, options, isStarBand) {
-            return `<select class="${isStarBand ? 'star-dropdown' : 'tier-default'}" onchange="updateStudent(${index}, '${field}', this.value); updateDropdownColor(this);">
-                ${options.map(option => `<option value="${option}" ${option === value ? 'selected' : ''}>${option}</option>`).join('')}
-            </select>`;
-        }
+function saveData() {
+    localStorage.setItem(studentsKey, JSON.stringify(students));
+}
 
-        function updateDropdownColor(select) {
-            const colors = {
-                "Urgent Intervention": "red",
-                "Intervention": "yellow",
-                "On Watch": "blue",
-                "At/Above Grade Level": "green"
-            };
-            if (colors[select.value]) {
-                select.style.backgroundColor = colors[select.value];
-                select.style.color = select.value === "Intervention" ? "black" : "white";
-            } else {
-                select.style.backgroundColor = "white";
-                select.style.color = "black";
-            }
-        }
+function loadStudents() {
+    const tableBody = document.getElementById("studentTableBody");
+    tableBody.innerHTML = "";
+    students.forEach((student, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${student.name}</td>
+            <td>${student.id}</td>
+            <td>${student.grade}</td>
+            <td>${student.qFs}</td>
+            <td>${createDropdown(index, 'ela', student.ela, ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"], true)}</td>
+            <td>${createDropdown(index, 'math', student.math, ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"], true)}</td>
+            <td>${student.referrals}</td>
+            <td>${student.suspensions}</td>
+            <td>${createDropdown(index, 'academic', student.academic, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
+            <td>${createDropdown(index, 'behavioral', student.behavioral, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
+            <td>${createDropdown(index, 'attendance', student.attendance, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
+            <td><input type="checkbox" ${student.sped ? "checked" : ""} onchange="updateStudent(${index}, 'sped', this.checked)"></td>
+            <td><input type="checkbox" ${student.el ? "checked" : ""} onchange="updateStudent(${index}, 'el', this.checked)"></td>
+            <td><input type="checkbox" ${student.cost ? "checked" : ""} onchange="updateStudent(${index}, 'cost', this.checked)"></td>
+            <td><textarea oninput="updateStudent(${index}, 'comments', this.value)">${student.comments}</textarea></td>
+        `;
+        tableBody.appendChild(row);
+    });
 
-        function updateStudent(index, field, value) {
-            students[index][field] = value;
-            saveData();
-            updateDropdownColor(document.querySelectorAll("select")[index * 5]); // Update color instantly
-        }
+    document.querySelectorAll("select").forEach(updateDropdownColor);
+}
 
-        document.addEventListener("DOMContentLoaded", () => {
-            loadStudents();
-            document.querySelectorAll("select").forEach(updateDropdownColor);
+function createDropdown(index, field, value, options, isStarBand) {
+    return `<select class="${isStarBand ? 'star-dropdown' : 'tier-default'}" onchange="updateStudent(${index}, '${field}', this.value); updateDropdownColor(this);">
+        ${options.map(option => `<option value="${option}" ${option === value ? 'selected' : ''}>${option}</option>`).join('')}
+    </select>`;
+}
+
+function updateDropdownColor(select) {
+    const colors = {
+        "Urgent Intervention": "red",
+        "Intervention": "yellow",
+        "On Watch": "blue",
+        "At/Above Grade Level": "green"
+    };
+    if (colors[select.value]) {
+        select.style.backgroundColor = colors[select.value];
+        select.style.color = select.value === "Intervention" ? "black" : "white";
+    } else {
+        select.style.backgroundColor = "white";
+        select.style.color = "black";
+    }
+}
+
+function updateStudent(index, field, value) {
+    students[index][field] = value;
+    saveData();
+    updateDropdownColor(document.querySelectorAll("select")[index * 5]);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadStudents();
+    document.querySelectorAll("select").forEach(updateDropdownColor);
         });
     </script>
 </body>
