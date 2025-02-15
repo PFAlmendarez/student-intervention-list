@@ -5,102 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Concerns Intervention List</title>
     <link rel="icon" type="image/png" href="muir_logo.gif">
-<style>
-    body { 
-        font-family: Arial, sans-serif; 
-        background-color: #f4f4f4; 
-        padding: 20px; 
-    }
-    .header {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        padding: 20px 0;
-        text-align: center;
-        color: #8C1515;
-    }
-    .header img {
-        position: absolute;
-        left: 20px;
-        width: 80px;
-        height: auto;
-    }
-    .container { 
-        width: 100%; 
-        background: white; 
-        padding: 20px; 
-        border-radius: 10px; 
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); 
-        overflow-x: auto; 
-    }
-    table { 
-        width: 100%; 
-        border-collapse: collapse; 
-        margin-top: 20px; 
-        white-space: nowrap; 
-        text-align: center; 
-    }
-    th, td { 
-        border: 1px solid #ddd; 
-        padding: 12px; 
-        text-align: center; 
-        max-width: 200px; 
-        word-wrap: break-word; 
-        font-size: 14px;
-    }
-    th { 
-        background-color: #8C1515; 
-        color: white; 
-        cursor: pointer; 
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        padding: 15px;
-    }
-    th:hover { 
-        background-color: #600d0d; 
-    }
-    td {
-        transition: background-color 0.3s ease;
-    }
-    tr:hover {
-        background-color: #f8f9fa; /* Light grey highlight */
-    }
-    select, textarea {
-        padding: 5px; 
-        border: 1px solid #ccc; 
-        border-radius: 4px; 
-        text-align: center; 
-        width: 100%; 
-        font-weight: bold; 
-    }
-    textarea { 
-        text-align: center; 
-        width: 100%; 
-        height: 50px;
-        resize: vertical;
-    }
-    
-    /* STAR Band Colors */
-    .urgent { background-color: #ff4d4d !important; color: white !important; font-weight: bold; }
-    .intervention { background-color: #ffd633 !important; color: black !important; font-weight: bold; }
-    .watch { background-color: #3399ff !important; color: white !important; font-weight: bold; }
-    .above { background-color: #33cc33 !important; color: white !important; font-weight: bold; }
-    
-    /* Color the rows based on intervention level */
-    .row-urgent { background-color: #ffcccc !important; }
-    .row-intervention { background-color: #fff4cc !important; }
-    .row-watch { background-color: #cce5ff !important; }
-    .row-above { background-color: #ccffcc !important; }
-    
-    @media (max-width: 768px) {
-        .header { flex-direction: column; text-align: center; }
-        .header img { position: static; margin-bottom: 10px; }
-        th, td { font-size: 12px; padding: 8px; }
-    }
-</style>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 20px 0;
+            text-align: center;
+            color: #8C1515;
+        }
+        .header img {
+            position: absolute;
+            left: 20px;
+            width: 80px;
+            height: auto;
+        }
+        .container { width: 100%; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; white-space: nowrap; text-align: center; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; max-width: 150px; word-wrap: break-word; }
+        th { background-color: #8C1515; color: white; cursor: pointer; position: relative; padding: 10px; font-size: 14px; }
+        th:hover { background-color: #600d0d; }
+        select { 
+            padding: 5px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            text-align: center; 
+            width: 100%; 
+            font-weight: bold; 
+        }
+        textarea { text-align: center; width: 100%; }
 
+        /* STAR Band Colors */
+        .urgent { background-color: red !important; color: white !important; }
+        .intervention { background-color: yellow !important; color: black !important; }
+        .watch { background-color: blue !important; color: white !important; }
+        .above { background-color: green !important; color: white !important; }
+
+        /* Default color for Intervention dropdowns */
+        .tier-default { background-color: white !important; color: black !important; }
+
+        @media (max-width: 768px) {
+            .header { flex-direction: column; text-align: center; }
+            .header img { position: static; margin-bottom: 10px; }
+        }
+    </style>
 </head>
 <body>
     <div class="header">
@@ -140,13 +90,23 @@
     </div>
 
     <script>
-    const studentsKey = "studentsData";
+        const studentsKey = "studentsData";
 
 // Preload with sample data if localStorage is empty
 if (!localStorage.getItem(studentsKey)) {
     const defaultStudents = [
         { name: "John Doe", id: "12345", grade: "7", qFs: "2", ela: "Intervention", math: "On Watch", referrals: "1", suspensions: "0", academic: "None", behavioral: "Tier 1", attendance: "None", sped: false, el: false, cost: false, comments: "" },
-        { name: "Jane Smith", id: "67890", grade: "8", qFs: "0", ela: "At/Above Grade Level", math: "At/Above Grade Level", referrals: "0", suspensions: "0", academic: "None", behavioral: "None", attendance: "None", sped: false, el: true, cost: false, comments: "" }
+        { name: "Jane Smith", id: "67890", grade: "8", qFs: "0", ela: "At/Above Grade Level", math: "At/Above Grade Level", referrals: "0", suspensions: "0", academic: "None", behavioral: "None", attendance: "None", sped: false, el: true, cost: false, comments: "" },
+        { name: "Michael Johnson", id: "11223", grade: "6", qFs: "3", ela: "Urgent Intervention", math: "Intervention", referrals: "2", suspensions: "1", academic: "Tier 2", behavioral: "Tier 1", attendance: "None", sped: true, el: false, cost: true, comments: "" },
+        { name: "Emily Davis", id: "44556", grade: "7", qFs: "1", ela: "On Watch", math: "On Watch", referrals: "0", suspensions: "0", academic: "Tier 1", behavioral: "None", attendance: "None", sped: false, el: true, cost: false, comments: "" },
+        { name: "Daniel Martinez", id: "77889", grade: "8", qFs: "2", ela: "Intervention", math: "Urgent Intervention", referrals: "3", suspensions: "1", academic: "Tier 3", behavioral: "Tier 2", attendance: "Tier 1", sped: false, el: false, cost: true, comments: "" },
+        { name: "Sophia Brown", id: "99100", grade: "6", qFs: "0", ela: "At/Above Grade Level", math: "At/Above Grade Level", referrals: "0", suspensions: "0", academic: "None", behavioral: "None", attendance: "None", sped: false, el: false, cost: false, comments: "" },
+        { name: "Liam Wilson", id: "22334", grade: "7", qFs: "4", ela: "Urgent Intervention", math: "Urgent Intervention", referrals: "5", suspensions: "2", academic: "Tier 3", behavioral: "Tier 3", attendance: "Tier 2", sped: true, el: false, cost: true, comments: "" },
+        { name: "Olivia Anderson", id: "55667", grade: "8", qFs: "1", ela: "On Watch", math: "Intervention", referrals: "1", suspensions: "0", academic: "Tier 1", behavioral: "Tier 1", attendance: "None", sped: false, el: true, cost: false, comments: "" },
+        { name: "Mason Thomas", id: "88990", grade: "6", qFs: "2", ela: "Intervention", math: "On Watch", referrals: "0", suspensions: "0", academic: "Tier 2", behavioral: "None", attendance: "None", sped: false, el: false, cost: false, comments: "" },
+        { name: "Ava Taylor", id: "33445", grade: "7", qFs: "3", ela: "Urgent Intervention", math: "Intervention", referrals: "2", suspensions: "1", academic: "Tier 2", behavioral: "Tier 1", attendance: "Tier 1", sped: true, el: false, cost: true, comments: "" },
+        { name: "James Harris", id: "66778", grade: "8", qFs: "0", ela: "At/Above Grade Level", math: "At/Above Grade Level", referrals: "0", suspensions: "0", academic: "None", behavioral: "None", attendance: "None", sped: false, el: false, cost: false, comments: "" },
+        { name: "Isabella White", id: "99001", grade: "6", qFs: "1", ela: "On Watch", math: "Intervention", referrals: "0", suspensions: "0", academic: "Tier 1", behavioral: "None", attendance: "None", sped: false, el: true, cost: false, comments: "" }
     ];
     localStorage.setItem(studentsKey, JSON.stringify(defaultStudents));
 }
@@ -160,55 +120,63 @@ function saveData() {
 function loadStudents() {
     const tableBody = document.getElementById("studentTableBody");
     tableBody.innerHTML = "";
-    
     students.forEach((student, index) => {
         const row = document.createElement("tr");
-
-        let rowClass = "";
-        if (student.ela === "Urgent Intervention" || student.math === "Urgent Intervention") {
-            rowClass = "row-urgent";
-        } else if (student.ela === "Intervention" || student.math === "Intervention") {
-            rowClass = "row-intervention";
-        } else if (student.ela === "On Watch" || student.math === "On Watch") {
-            rowClass = "row-watch";
-        } else if (student.ela === "At/Above Grade Level" && student.math === "At/Above Grade Level") {
-            rowClass = "row-above";
-        }
-        
-        row.className = rowClass;
-
-        row.innerHTML = `
+        row.innerHTML = 
             <td>${student.name}</td>
             <td>${student.id}</td>
             <td>${student.grade}</td>
             <td>${student.qFs}</td>
-            <td class="${getColorClass(student.ela)}">${student.ela}</td>
-            <td class="${getColorClass(student.math)}">${student.math}</td>
+            <td>${createDropdown(index, 'ela', student.ela, ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"], true)}</td>
+            <td>${createDropdown(index, 'math', student.math, ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"], true)}</td>
             <td>${student.referrals}</td>
             <td>${student.suspensions}</td>
-            <td>${student.academic}</td>
-            <td>${student.behavioral}</td>
-            <td>${student.attendance}</td>
-            <td><input type="checkbox" ${student.sped ? "checked" : ""}></td>
-            <td><input type="checkbox" ${student.el ? "checked" : ""}></td>
-            <td><input type="checkbox" ${student.cost ? "checked" : ""}></td>
-            <td><textarea>${student.comments}</textarea></td>
-        `;
+            <td>${createDropdown(index, 'academic', student.academic, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
+            <td>${createDropdown(index, 'behavioral', student.behavioral, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
+            <td>${createDropdown(index, 'attendance', student.attendance, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
+            <td><input type="checkbox" ${student.sped ? "checked" : ""} onchange="updateStudent(${index}, 'sped', this.checked)"></td>
+            <td><input type="checkbox" ${student.el ? "checked" : ""} onchange="updateStudent(${index}, 'el', this.checked)"></td>
+            <td><input type="checkbox" ${student.cost ? "checked" : ""} onchange="updateStudent(${index}, 'cost', this.checked)"></td>
+            <td><textarea oninput="updateStudent(${index}, 'comments', this.value)">${student.comments}</textarea></td>
+        ;
         tableBody.appendChild(row);
     });
+
+    document.querySelectorAll("select").forEach(updateDropdownColor);
 }
 
-function getColorClass(value) {
+function createDropdown(index, field, value, options, isStarBand) {
+    return <select class="${isStarBand ? 'star-dropdown' : 'tier-default'}" onchange="updateStudent(${index}, '${field}', this.value); updateDropdownColor(this);">
+        ${options.map(option => <option value="${option}" ${option === value ? 'selected' : ''}>${option}</option>).join('')}
+    </select>;
+}
+
+function updateDropdownColor(select) {
     const colors = {
-        "Urgent Intervention": "urgent",
-        "Intervention": "intervention",
-        "On Watch": "watch",
-        "At/Above Grade Level": "above"
+        "Urgent Intervention": "red",
+        "Intervention": "yellow",
+        "On Watch": "blue",
+        "At/Above Grade Level": "green"
     };
-    return colors[value] || "";
+    if (colors[select.value]) {
+        select.style.backgroundColor = colors[select.value];
+        select.style.color = select.value === "Intervention" ? "black" : "white";
+    } else {
+        select.style.backgroundColor = "white";
+        select.style.color = "black";
+    }
 }
 
-document.addEventListener("DOMContentLoaded", loadStudents);
-</script>
+function updateStudent(index, field, value) {
+    students[index][field] = value;
+    saveData();
+    updateDropdownColor(document.querySelectorAll("select")[index * 5]);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadStudents();
+    document.querySelectorAll("select").forEach(updateDropdownColor);
+        });
+    </script>
 </body>
 </html>
