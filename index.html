@@ -95,18 +95,40 @@
 // Preload with sample data if localStorage is empty
 if (!localStorage.getItem(studentsKey)) {
     const defaultStudents = [
-        { name: "John Doe", id: "12345", grade: "7", qFs: "2", ela: "Intervention", math: "On Watch", referrals: "1", suspensions: "0", academic: "None", behavioral: "Tier 1", attendance: "None", sped: false, el: false, cost: false, comments: "" },
-        { name: "Jane Smith", id: "67890", grade: "8", qFs: "0", ela: "At/Above Grade Level", math: "At/Above Grade Level", referrals: "0", suspensions: "0", academic: "None", behavioral: "None", attendance: "None", sped: false, el: true, cost: false, comments: "" },
-        { name: "Michael Johnson", id: "11223", grade: "6", qFs: "3", ela: "Urgent Intervention", math: "Intervention", referrals: "2", suspensions: "1", academic: "Tier 2", behavioral: "Tier 1", attendance: "None", sped: true, el: false, cost: true, comments: "" },
-        { name: "Emily Davis", id: "44556", grade: "7", qFs: "1", ela: "On Watch", math: "On Watch", referrals: "0", suspensions: "0", academic: "Tier 1", behavioral: "None", attendance: "None", sped: false, el: true, cost: false, comments: "" },
-        { name: "Daniel Martinez", id: "77889", grade: "8", qFs: "2", ela: "Intervention", math: "Urgent Intervention", referrals: "3", suspensions: "1", academic: "Tier 3", behavioral: "Tier 2", attendance: "Tier 1", sped: false, el: false, cost: true, comments: "" },
-        { name: "Sophia Brown", id: "99100", grade: "6", qFs: "0", ela: "At/Above Grade Level", math: "At/Above Grade Level", referrals: "0", suspensions: "0", academic: "None", behavioral: "None", attendance: "None", sped: false, el: false, cost: false, comments: "" },
-        { name: "Liam Wilson", id: "22334", grade: "7", qFs: "4", ela: "Urgent Intervention", math: "Urgent Intervention", referrals: "5", suspensions: "2", academic: "Tier 3", behavioral: "Tier 3", attendance: "Tier 2", sped: true, el: false, cost: true, comments: "" },
-        { name: "Olivia Anderson", id: "55667", grade: "8", qFs: "1", ela: "On Watch", math: "Intervention", referrals: "1", suspensions: "0", academic: "Tier 1", behavioral: "Tier 1", attendance: "None", sped: false, el: true, cost: false, comments: "" },
-        { name: "Mason Thomas", id: "88990", grade: "6", qFs: "2", ela: "Intervention", math: "On Watch", referrals: "0", suspensions: "0", academic: "Tier 2", behavioral: "None", attendance: "None", sped: false, el: false, cost: false, comments: "" },
-        { name: "Ava Taylor", id: "33445", grade: "7", qFs: "3", ela: "Urgent Intervention", math: "Intervention", referrals: "2", suspensions: "1", academic: "Tier 2", behavioral: "Tier 1", attendance: "Tier 1", sped: true, el: false, cost: true, comments: "" },
-        { name: "James Harris", id: "66778", grade: "8", qFs: "0", ela: "At/Above Grade Level", math: "At/Above Grade Level", referrals: "0", suspensions: "0", academic: "None", behavioral: "None", attendance: "None", sped: false, el: false, cost: false, comments: "" },
-        { name: "Isabella White", id: "99001", grade: "6", qFs: "1", ela: "On Watch", math: "Intervention", referrals: "0", suspensions: "0", academic: "Tier 1", behavioral: "None", attendance: "None", sped: false, el: true, cost: false, comments: "" }
+        {
+            name: "John Doe",
+            id: "12345",
+            grade: "7",
+            qFs: "2",
+            ela: "Intervention",
+            math: "On Watch",
+            referrals: "1",
+            suspensions: "0",
+            academic: "None",
+            behavioral: "Tier 1",
+            attendance: "None",
+            sped: false,
+            el: false,
+            cost: false,
+            comments: ""
+        },
+        {
+            name: "Jane Smith",
+            id: "67890",
+            grade: "8",
+            qFs: "0",
+            ela: "At/Above Grade Level",
+            math: "At/Above Grade Level",
+            referrals: "0",
+            suspensions: "0",
+            academic: "None",
+            behavioral: "None",
+            attendance: "None",
+            sped: false,
+            el: true,
+            cost: false,
+            comments: ""
+        }
     ];
     localStorage.setItem(studentsKey, JSON.stringify(defaultStudents));
 }
@@ -122,7 +144,7 @@ function loadStudents() {
     tableBody.innerHTML = "";
     students.forEach((student, index) => {
         const row = document.createElement("tr");
-        row.innerHTML = 
+        row.innerHTML = `
             <td>${student.name}</td>
             <td>${student.id}</td>
             <td>${student.grade}</td>
@@ -138,7 +160,7 @@ function loadStudents() {
             <td><input type="checkbox" ${student.el ? "checked" : ""} onchange="updateStudent(${index}, 'el', this.checked)"></td>
             <td><input type="checkbox" ${student.cost ? "checked" : ""} onchange="updateStudent(${index}, 'cost', this.checked)"></td>
             <td><textarea oninput="updateStudent(${index}, 'comments', this.value)">${student.comments}</textarea></td>
-        ;
+        `;
         tableBody.appendChild(row);
     });
 
@@ -146,9 +168,9 @@ function loadStudents() {
 }
 
 function createDropdown(index, field, value, options, isStarBand) {
-    return <select class="${isStarBand ? 'star-dropdown' : 'tier-default'}" onchange="updateStudent(${index}, '${field}', this.value); updateDropdownColor(this);">
-        ${options.map(option => <option value="${option}" ${option === value ? 'selected' : ''}>${option}</option>).join('')}
-    </select>;
+    return `<select class="${isStarBand ? 'star-dropdown' : 'tier-default'}" onchange="updateStudent(${index}, '${field}', this.value); updateDropdownColor(this);">
+        ${options.map(option => `<option value="${option}" ${option === value ? 'selected' : ''}>${option}</option>`).join('')}
+    </select>`;
 }
 
 function updateDropdownColor(select) {
