@@ -104,6 +104,32 @@
             }
         }
 
+        function renderTable(students) {
+            const tableBody = document.getElementById("studentTableBody");
+            tableBody.innerHTML = "";
+            students.forEach((student, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.id}</td>
+                    <td>${student.grade}</td>
+                    <td>${student.qFs}</td>
+                    <td>${student.ela}</td>
+                    <td>${student.math}</td>
+                    <td>${student.referrals}</td>
+                    <td>${student.suspensions}</td>
+                    <td>${student.academic}</td>
+                    <td>${student.behavioral}</td>
+                    <td>${student.attendance}</td>
+                    <td>${student.sped}</td>
+                    <td>${student.el}</td>
+                    <td>${student.cost}</td>
+                    <td>${student.comments}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
         async function saveData(student) {
             try {
                 await fetch(SHEET_URL, {
