@@ -90,21 +90,14 @@
     </div>
 
     <script>
-        const SHEET_URL = "https://script.google.com/a/macros/slusd.us/s/AKfycbzaPF-VTQmVP7B_mo6AdpadH-zttzLueh0hq-96sONLFVbCwYdXyMnVa4ywfpjIh5OkSA/exec";
-        let students = [];
+        const studentsKey = "studentsData";
+        let students = JSON.parse(localStorage.getItem(studentsKey)) || [];
 
-        async function loadStudents() {
-            try {
-                const response = await fetch(SHEET_URL, { method: "GET", cache: "no-cache" });
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                students = await response.json();
-                renderTable(students);
-            } catch (error) {
-                console.error("Error loading data:", error);
-            }
+        function saveData() {
+            localStorage.setItem(studentsKey, JSON.stringify(students));
         }
-
-        function renderTable(students) {
+        
+        function loadStudents() {
             const tableBody = document.getElementById("studentTableBody");
             tableBody.innerHTML = "";
             students.forEach((student, index) => {
@@ -114,42 +107,56 @@
                     <td>${student.id}</td>
                     <td>${student.grade}</td>
                     <td>${student.qFs}</td>
-                    <td>${student.ela}</td>
-                    <td>${student.math}</td>
+                    <td>${createDropdown(index, 'ela', student.ela, ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"], true)}</td>
+                    <td>${createDropdown(index, 'math', student.math, ["Urgent Intervention", "Intervention", "On Watch", "At/Above Grade Level"], true)}</td>
                     <td>${student.referrals}</td>
                     <td>${student.suspensions}</td>
-                    <td>${student.academic}</td>
-                    <td>${student.behavioral}</td>
-                    <td>${student.attendance}</td>
-                    <td>${student.sped}</td>
-                    <td>${student.el}</td>
-                    <td>${student.cost}</td>
-                    <td><textarea id="comments-${index}" name="comments-${index}" oninput="updateStudent(${index}, 'comments', this.value)">${student.comments}</textarea></td>
+                    <td>${createDropdown(index, 'academic', student.academic, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
+                    <td>${createDropdown(index, 'behavioral', student.behavioral, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
+                    <td>${createDropdown(index, 'attendance', student.attendance, ["None", "Tier 1", "Tier 2", "Tier 3"], false)}</td>
+                    <td><input type="checkbox" ${student.sped ? "checked" : ""} onchange="updateStudent(${index}, 'sped', this.checked)"></td>
+                    <td><input type="checkbox" ${student.el ? "checked" : ""} onchange="updateStudent(${index}, 'el', this.checked)"></td>
+                    <td><input type="checkbox" ${student.cost ? "checked" : ""} onchange="updateStudent(${index}, 'cost', this.checked)"></td>
+                    <td><textarea oninput="updateStudent(${index}, 'comments', this.value)">${student.comments}</textarea></td>
                 `;
                 tableBody.appendChild(row);
             });
+
+            // Apply colors to dropdowns on load
+            document.querySelectorAll("select").forEach(updateDropdownColor);
         }
 
-        async function saveData(student) {
-            try {
-                await fetch(SHEET_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(student)
-                });
-                console.log("Data saved successfully!");
-            } catch (error) {
-                console.error("Error saving data:", error);
+        function createDropdown(index, field, value, options, isStarBand) {
+            return `<select class="${isStarBand ? 'star-dropdown' : 'tier-default'}" onchange="updateStudent(${index}, '${field}', this.value); updateDropdownColor(this);">
+                ${options.map(option => `<option value="${option}" ${option === value ? 'selected' : ''}>${option}</option>`).join('')}
+            </select>`;
+        }
+
+        function updateDropdownColor(select) {
+            const colors = {
+                "Urgent Intervention": "red",
+                "Intervention": "yellow",
+                "On Watch": "blue",
+                "At/Above Grade Level": "green"
+            };
+            if (colors[select.value]) {
+                select.style.backgroundColor = colors[select.value];
+                select.style.color = select.value === "Intervention" ? "black" : "white";
+            } else {
+                select.style.backgroundColor = "white";
+                select.style.color = "black";
             }
         }
 
         function updateStudent(index, field, value) {
             students[index][field] = value;
-            saveData(students[index]);
+            saveData();
+            updateDropdownColor(document.querySelectorAll("select")[index * 5]); // Update color instantly
         }
 
         document.addEventListener("DOMContentLoaded", () => {
             loadStudents();
+            document.querySelectorAll("select").forEach(updateDropdownColor);
         });
     </script>
 </body>
